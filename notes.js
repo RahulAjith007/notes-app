@@ -1,17 +1,12 @@
  const fs = require('fs')
  const chalk = require('chalk')
 
- const getNotes = function (){
-    return 'Your Notes...'
-}
 
-const addNotes = function(title, body){
+const addNotes = (title, body) => {
     const notes = loadNotes()
-    const duplicateNotes = notes.filter(function(note){
-        return note.title === title
-    })
+    const duplicateNotes = notes.find((note) => note.title === title)
 
-    if(duplicateNotes.length === 0){
+    if(!duplicateNotes){
         notes.push({
             title,
             body
@@ -28,11 +23,9 @@ const addNotes = function(title, body){
 }
 
 
-const removeNote = function (title) {
+const removeNote = (title) => {
   const notes = loadNotes()
-  const notesToKeep  = notes.filter(function(note){
-      return note.title!==title
-  })
+  const notesToKeep  = notes.filter((note) => note.title!==title)
   if (notes.length > notesToKeep.length) {
     console.log(chalk.green.inverse('Note removed!'))
     saveNotes(notesToKeep)
@@ -42,6 +35,29 @@ const removeNote = function (title) {
    
 }
 
+const listNote = () => {
+    const notes = loadNotes()
+    console.log(chalk.white.inverse('Your Notes'));
+    notes.forEach(note => console.log(note.title))
+
+    
+}
+
+const readNotes = (title) => {
+    const notes = loadNotes();
+
+    let note =  notes.find(note => note.title == title)   
+  
+    if(note) {
+        console.log(chalk.yellow.inverse(note.title));   
+        console.log(note.body);
+        
+    } else{
+        console.log(chalk.red.inverse('Note not found'));
+        
+    }
+}
+
 const saveNotes = function(notes){
     const dataJSON = JSON.stringify(notes)
     fs.writeFileSync('notes.json', dataJSON)
@@ -49,7 +65,7 @@ const saveNotes = function(notes){
 }
 
 
-const loadNotes = function(){
+const loadNotes = () => {
 
     try{
 
@@ -73,5 +89,7 @@ const loadNotes = function(){
 module.exports = {
     getNotes: getNotes,
     addNotes: addNotes,
-    removeNote: removeNote
+    removeNote: removeNote,
+    listNote: listNote,
+    readNotes: readNotes
 }
